@@ -3,9 +3,9 @@ const status = document.querySelector('.status');
 const resetBtn = document.getElementById('resetBtn');
 const winnerModal = document.getElementById('winnerModal');
 const winnerText = document.getElementById('winnerText');
-const moveSound = new Audio('/sounds/move.mp3');
-const winSound = new Audio('/sounds/win.mp3');
-const drawSound = new Audio('/sounds/drawSound.mp3');
+const moveSound = new Audio('sounds/move.mp3');
+const winSound = new Audio('sounds/win.mp3');
+const drawSound = new Audio('sounds/drawSound.mp3');
 
 let currentPlayer = 'X';
 let gameBoard = ['', '', '', '', '', '', '', '', ''];
