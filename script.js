@@ -79,45 +79,58 @@ function fireConfetti() {
     const myConfetti = confetti.create(null, {
         resize: true,
         useWorker: true,
-        zIndex: 1001
+        zIndex: 9999
     });
     
     // First burst
     myConfetti({
-        particleCount: 100,
+        particleCount: 150,
         spread: 70,
         origin: { y: 0.6 },
         colors: colors,
         shapes: ['square', 'circle'],
         scalar: 1.2,
         disableForReducedMotion: true,
-        zIndex: 1001
+        zIndex: 9999
     });
 
-    // Second burst with different settings
+    // Side bursts
     setTimeout(() => {
+        // Left burst
         myConfetti({
-            particleCount: 50,
+            particleCount: 80,
             angle: 60,
             spread: 55,
             origin: { x: 0, y: 0.6 },
             colors: colors,
-            zIndex: 1001
+            zIndex: 9999
         });
+        // Right burst
         myConfetti({
-            particleCount: 50,
+            particleCount: 80,
             angle: 120,
             spread: 55,
             origin: { x: 1, y: 0.6 },
             colors: colors,
-            zIndex: 1001
+            zIndex: 9999
         });
     }, 200);
+
+    // Final burst
+    setTimeout(() => {
+        myConfetti({
+            particleCount: 100,
+            spread: 100,
+            origin: { y: 0.7 },
+            colors: colors,
+            zIndex: 9999
+        });
+    }, 400);
 
     // Cleanup
     setTimeout(() => {
         myConfetti.reset();
-    }, 3000);
+    }, 4000);
 }
 
 function updatePlayerProfiles() {
