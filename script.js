@@ -3,13 +3,16 @@ const status = document.querySelector('.status');
 const resetBtn = document.getElementById('resetBtn');
 const winnerModal = document.getElementById('winnerModal');
 const winnerText = document.getElementById('winnerText');
-const moveSound = new Audio('/sounds/move.mp3');
-const winSound = new Audio('/sounds/win.mp3');
-const drawSound = new Audio('/sounds/drawSound.mp3');
 
 let currentPlayer = 'X';
 let gameBoard = ['', '', '', '', '', '', '', '', ''];
 let gameActive = true;
+
+// Track statistics
+let statistics = {
+    X: { wins: 0, draws: 0 },
+    O: { wins: 0, draws: 0 }
+};
 
 const winningCombinations = [
     [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
@@ -26,20 +29,17 @@ function handleCellClick(e) {
     gameBoard[index] = currentPlayer;
     cell.textContent = currentPlayer;
     cell.classList.add(currentPlayer.toLowerCase());
-    
-    // Play move sound
-    moveSound.currentTime = 0;
-    moveSound.play();
 
     if (checkWin()) {
         gameActive = false;
-        winSound.currentTime = 0;
-        winSound.play();
+        statistics[currentPlayer].wins++;
+        updatePlayerProfiles();
         announceWinner();
     } else if (checkDraw()) {
         gameActive = false;
-        drawSound.currentTime = 0;
-        drawSound.play();
+        statistics.X.draws++;
+        statistics.O.draws++;
+        updatePlayerProfiles();
         showDrawMessage();
     } else {
         currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
@@ -62,98 +62,66 @@ function checkDraw() {
 function announceWinner() {
     winnerText.textContent = `Player ${currentPlayer} Wins! 🎉`;
     winnerModal.classList.add('show');
-    
-    // Trigger confetti animation
+    status.textContent = `Player ${currentPlayer} Wins!`;
     fireConfetti();
-    
-    const winningCombination = winningCombinations.find(combination => {
-        return combination.every(index => gameBoard[index] === currentPlayer);
-    });
-    
-    // Highlight winning cells
-    winningCombination.forEach(index => {
-        cells[index].classList.add('winner');
-    });
 }
 
 function showDrawMessage() {
     winnerText.textContent = "It's a Draw! 🤝";
     winnerModal.classList.add('show');
+    status.textContent = "It's a Draw!";
 }
 
 function fireConfetti() {
-    // Configure confetti to appear above modal
-    const canvasConfetti = confetti.create(null, {
-        resize: true,
-        useWorker: true,
-        zIndex: 999999
-    });
-
+    const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff'];
+    
     // First burst
-    canvasConfetti({
-        particleCount: 80,
-        spread: 55,
-        origin: { y: 0.5 },
-        zIndex: 999999
+    confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: colors,
+        shapes: ['square', 'circle'],
+        scalar: 1.2,
+        disableForReducedMotion: true
     });
 
-    // Multiple bursts
-    const count = 150;
-    const defaults = {
-        origin: { y: 0.5 }
-    };
-
-    function fire(particleRatio, opts) {
-        canvasConfetti(Object.assign({}, defaults, opts, {
-            particleCount: Math.floor(count * particleRatio),
-            zIndex: 999999
-        }));
-    }
-
-    fire(0.25, {
-        spread: 20,
-        startVelocity: 45
-    });
-
-    fire(0.2, {
-        spread: 45
-    });
-
-    fire(0.35, {
-        spread: 80,
-        decay: 0.91,
-        scalar: 0.8
-    });
-
-    fire(0.1, {
-        spread: 100,
-        startVelocity: 25,
-        decay: 0.92,
-        scalar: 1.2
-    });
-
-    fire(0.1, {
-        spread: 90,
-        startVelocity: 35
-    });
-
-    // Cleanup
+    // Second burst with different settings
     setTimeout(() => {
-        canvasConfetti.reset();
-    }, 4000);
+        confetti({
+            particleCount: 50,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0, y: 0.6 },
+            colors: colors
+        });
+        confetti({
+            particleCount: 50,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1, y: 0.6 },
+            colors: colors
+        });
+    }, 200);
+}
+
+function updatePlayerProfiles() {
+    document.querySelector('.wins-x').textContent = statistics.X.wins;
+    document.querySelector('.draws-x').textContent = statistics.X.draws;
+    document.querySelector('.wins-o').textContent = statistics.O.wins;
+    document.querySelector('.draws-o').textContent = statistics.O.draws;
 }
 
 function resetGame() {
     gameBoard = ['', '', '', '', '', '', '', '', ''];
     gameActive = true;
     currentPlayer = 'X';
-    status.textContent = `Player ${currentPlayer}'s Turn`;
-    winnerModal.classList.remove('show');
-    
     cells.forEach(cell => {
         cell.textContent = '';
-        cell.classList.remove('x', 'o', 'winner');
+        cell.classList.remove('x', 'o');
     });
+    status.textContent = `Player ${currentPlayer}'s Turn`;
+    winnerModal.classList.remove('show');
 }
 
 // Event Listeners
