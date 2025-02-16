@@ -75,34 +75,49 @@ function showDrawMessage() {
 function fireConfetti() {
     const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff'];
     
+    // Configure confetti
+    const myConfetti = confetti.create(null, {
+        resize: true,
+        useWorker: true,
+        zIndex: 1001
+    });
+    
     // First burst
-    confetti({
+    myConfetti({
         particleCount: 100,
         spread: 70,
         origin: { y: 0.6 },
         colors: colors,
         shapes: ['square', 'circle'],
         scalar: 1.2,
-        disableForReducedMotion: true
+        disableForReducedMotion: true,
+        zIndex: 1001
     });
 
     // Second burst with different settings
     setTimeout(() => {
-        confetti({
+        myConfetti({
             particleCount: 50,
             angle: 60,
             spread: 55,
             origin: { x: 0, y: 0.6 },
-            colors: colors
+            colors: colors,
+            zIndex: 1001
         });
-        confetti({
+        myConfetti({
             particleCount: 50,
             angle: 120,
             spread: 55,
             origin: { x: 1, y: 0.6 },
-            colors: colors
+            colors: colors,
+            zIndex: 1001
         });
     }, 200);
+
+    // Cleanup
+    setTimeout(() => {
+        myConfetti.reset();
+    }, 3000);
 }
 
 function updatePlayerProfiles() {
