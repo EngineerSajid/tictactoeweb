@@ -23,7 +23,7 @@
             ]
         },
         {
-            "source": "/(.+\\.(?:css|js|mp3))",
+            "source": "/(.+\\.(css|js|mp3))",
             "headers": [
                 {
                     "key": "Content-Type",
